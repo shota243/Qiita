@@ -1,8 +1,13 @@
 # 使用バージョン
 
-- Python 3.6.5
-- pytz 2018d
-- tzlocal 1.4
+- Python 3.7.6
+- pytz 2019.3
+- tzlocal 1.5.1
+
+# 更新内容
+
+- Python 3.7 で確認
+- fromisoformat() メソッドの記述追加
 
 # datetime クラス
 Python で日付を扱うクラスは datetime モジュールの datetime クラス。
@@ -193,6 +198,14 @@ datetime.strptime('2018-01-02T03:04:05+0900', '%Y-%m-%dT%H:%M:%S%z')
 datetime.datetime(2018, 1, 2, 3, 4, 5, tzinfo=datetime.timezone(datetime.timedelta(0, 32400)))
 ```
 
+Python 3.7 から fromisoformat クラスメソッドが使用できる。
+
+```py
+>>> datetime.fromisoformat('2018-01-02T03:04:05+09:00')
+datetime.fromisoformat('2018-01-02T03:04:05+09:00')
+datetime.datetime(2018, 1, 2, 3, 4, 5, tzinfo=datetime.timezone(datetime.timedelta(seconds=32400)))
+```
+
 タイムゾーン（'%z'）が無いと naive なインスタンスに、在ると aware なインスタンスになるが、tzinfo は pytz の timezone ではなく datetime の timezone になる。
 UTC からのオフセットは情報があるが地域に関する情報はない。
 astimezone メソッドで UTC のデータに変敢して処理し、出力時に適切なタイムゾーンに変関することになる。
@@ -200,6 +213,9 @@ astimezone メソッドで UTC のデータに変敢して処理し、出力時�
 ```py
 >>> datetime.strptime('2018-01-02T03:04:05+0900', '%Y-%m-%dT%H:%M:%S%z').astimezone(utc)
 datetime.strptime('2018-01-02T03:04:05+0900', '%Y-%m-%dT%H:%M:%S%z').astimezone(utc)
+datetime.datetime(2018, 1, 1, 18, 4, 5, tzinfo=<UTC>)
+>>> datetime.fromisoformat('2018-01-02T03:04:05').astimezone(utc)
+datetime.fromisoformat('2018-01-02T03:04:05').astimezone(utc)
 datetime.datetime(2018, 1, 1, 18, 4, 5, tzinfo=<UTC>)
 ```
 
@@ -285,7 +301,7 @@ datetime.datetime(2018, 6, 3, 2, 18, 29, 52492)
 1. タイムゾーンを表すのは pytz モジュールの timezone クラス。
 1. datetime のコンストラクタではタイムゾーンを指定せず、一旦 naive なインスタンスを作ってから pytz の timezone の localize メソッドで aware なインスタンスを生成する。
 1. 文字列への変換は strftime メソッドもしくは isoformat メソッド。ifoformat メソッドでは timespec を指定する。
-1. 文字列からの変換は strptime クラスメソッド。タイムゾーンがない場合は naive なインスタンスになるので localize でローカル時刻の時刻データに変換後、さらに UTC の時刻に変換する。
+1. 文字列からの変換は strptime クラスメソッドもしくは fromisoformat クラスメソッド。タイムゾーンがない場合は naive なインスタンスになるので localize でローカル時刻の時刻データに変換後、さらに UTC の時刻に変換する。
 1. UNIX 時刻への変換は timestamp メソッド。
 1. UNIX 時刻からの変換は fromtimestamp クラスメソッド。tz パラメータでタイムゾーン pytz.urc を指定する。
 1. 現在時刻の取得は now クラスメソッド。tz パラメータでタイムゾーン pytz.urc を指定する。
