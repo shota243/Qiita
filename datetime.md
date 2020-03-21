@@ -7,7 +7,7 @@
 # datetime クラス
 Python で日付を扱うクラスは datetime モジュールの datetime クラス。
 
-```
+```py
 >>> from datetime import datetime
 ```
 
@@ -27,7 +27,7 @@ aware なデータを扱うことには必然性があり、また naive で済�
 
 datetime クラスのコンストラクタに tzinfo パラメータを渡さなめれば naive なインスタンスが作成される。
 
-```
+```py
 >>> naivetime = datetime(2018, 1, 2, 3, 4, 5)
 naivetime = datetime(2018, 1, 2, 3, 4, 5)
 >>> naivetime
@@ -45,7 +45,7 @@ tzinfo の具体的なサブクラスとしては datetime モジュールに ti
 このデータベースの情報を OS が保持しているものを利用するのが [pytz](https://pypi.org/project/pytz/)モジュールである。pytz は標準モジュールではないため別途インストールが必要である。
 また、現在地のタイムゾーン情報を取得するのが [tzlocal](https://pypi.org/project/tzlocal/)モジュールである。tzlocal は pytz で定義されている timezone インスタンスを返す。pytz が必要となる。
 
-```
+```py
 >>> from pytz import timezone, utc
 >>> from tzlocal import get_localzone
 ```
@@ -53,14 +53,14 @@ tzinfo の具体的なサブクラスとしては datetime モジュールに ti
 pytz モジュールの timezone クラスは datetime モジュールの timezone クラス同様 tzinfo のサブクラスである。両方を使う必要がない限り pytz の timezone だけをそのままの名前で使用する。utc は UTC のタイムゾーンデータ。
 また、tzlocal からは get_localzone() 関数のみを import して使用する。
 
-```
+```py
 >>> ca = timezone('America/Los_Angeles')
 >>> ja = get_localzone()
 ```
 
 ja は日本のタイムゾーンとなるが、表示すると JST+9:00:00 ではなくLMT+9:19:00 と表示される。同様に ca も LMT-1 day, 16:07:00 となる。
 
-```
+```py
 >>> ja
 ja
 <DstTzInfo 'Asia/Tokyo' LMT+9:19:00 STD>
@@ -73,7 +73,7 @@ LMT は Local Mean Time の頭文字であり、その場所の平均太陽時�
 
 datetime クラスのコンストラクタや replace メソッドで tzinfo を指定した場合は LMT が採用されてしまう。astimezone メソッドで UTC に変換してみても 9 時間 19 分が引かれる。
 
-```
+```py
 >>> datetime(2018, 1, 2, 3, 4, 5, tzinfo=ja)
 datetime(2018, 1, 2, 3, 4, 5, tzinfo=ja)
 datetime.datetime(2018, 1, 2, 3, 4, 5, tzinfo=<DstTzInfo 'Asia/Tokyo' LMT+9:19:00 STD>)
@@ -87,7 +87,7 @@ datetime.datetime(2018, 1, 1, 17, 45, 5, tzinfo=<UTC>)
 
 これに対し、timezone クラスの localize メソッドを使うことにより JST aware な datetime インスタンスを得られる。
 
-```
+```py
 >>> awaretime = ja.localize(naivetime)
 >>> awaretime
 awaretime
@@ -96,7 +96,7 @@ datetime.datetime(2018, 1, 2, 3, 4, 5, tzinfo=<DstTzInfo 'Asia/Tokyo' JST+9:00:0
 
 与える naive な datetime を日本で夏時間が施行されていた時期の時刻とすると JDT aware なインスタンスが得られる。
 
-```
+```py
 >>> ja.localize(datetime(1950, 7, 2, 3, 4, 5))
 ja.localize(datetime(1950, 7, 2, 3, 4, 5))
 datetime.datetime(1950, 7, 2, 3, 4, 5, tzinfo=<DstTzInfo 'Asia/Tokyo' JDT+10:00:00 DST>)
@@ -104,7 +104,7 @@ datetime.datetime(1950, 7, 2, 3, 4, 5, tzinfo=<DstTzInfo 'Asia/Tokyo' JDT+10:00:
 
 1950 年 7 月 2 日 3 時 4 分 5 秒から 2018 年 1 月 2 日 3 時 4 分 5 秒までの時間を求めると、naive なデータの場合は 24656 日、東京での aware なデータだと 24656 日と3600 秒（1時間）となる。
 
-```
+```py
 >>> naivetime - datetime(1950, 7, 2, 3, 4, 5)
 naivetime - datetime(1950, 7, 2, 3, 4, 5)
 datetime.timedelta(24656)
@@ -116,7 +116,7 @@ datetime.timedelta(24656, 3600)
 この差分を 1950 年 7 月 2 日 3 時 4 分 5 秒に加えると、夏時間のままで計算が行われて元に戻らない。
 ただし、== 演算子で比較すると True となる。
 
-```
+```py
 >>> ja.localize(datetime(1950, 7, 2, 3, 4, 5)) + (awaretime - ja.localize(datetime(1950, 7, 2, 3, 4, 5)))
 ja.localize(datetime(1950, 7, 2, 3, 4, 5)) + (awaretime - ja.localize(datetime(1950, 7, 2, 3, 4, 5)))
 datetime.datetime(2018, 1, 2, 4, 4, 5, tzinfo=<DstTzInfo 'Asia/Tokyo' JDT+10:00:00 DST>)
@@ -129,7 +129,7 @@ True
 
 aware なデータにした後は、astimezone メソッドによりタイムゾーンの変換ができる。表している時刻は変らない。
 
-```
+```py
 >>> awaretime.astimezone(utc)
 awaretime.astimezone(utc)
 datetime.datetime(2018, 1, 1, 18, 4, 5, tzinfo=<UTC>)
@@ -143,7 +143,7 @@ pytz では、時刻計算は常に UTC にて行い、人が読むための出�
 
 naive であっても aware であっても datetime クラスの strftime メソッドで文字列に変換できる。
 
-```
+```py
 >>> naivetime.strftime('%Y-%m-%dT%H:%M:%S')
 naivetime.strftime('%Y-%m-%dT%H:%M:%S')
 '2018-01-02T03:04:05'
@@ -154,7 +154,7 @@ awaretime.strftime('%Y-%m-%dT%H:%M:%S%z')
 
 naive なインスタンスの場合はタイムゾーン（'%z'）は空文字列となる。
 
-```
+```py
 >>> naivetime.strftime('%Y-%m-%dT%H:%M:%S%z')
 naivetime.strftime('%Y-%m-%dT%H:%M:%S%z')
 '2018-01-02T03:04:05'
@@ -162,7 +162,7 @@ naivetime.strftime('%Y-%m-%dT%H:%M:%S%z')
 
 isoformat メソッドは ISO 8601 形式の文字列を生成する。
 
-```
+```py
 >>> naivetime.isoformat()
 naivetime.isoformat()
 '2018-01-02T03:04:05'
@@ -174,7 +174,7 @@ awaretime.isoformat()
 秒以下の桁の表示はデフォルトではデータに依存するが、timespec キーワードパラメータで指定することもできる。値は 'seconds', 'milliseconds' もしくは 'microseconds'。
 また日付けと時刻の間の区切り文字も指定できる。
 
-```
+```py
 >>> naivetime.isoformat(' ', timespec='microseconds')
 naivetime.isoformat(' ', timespec='microseconds')
 '2018-01-02 03:04:05.000000'
@@ -184,7 +184,7 @@ naivetime.isoformat(' ', timespec='microseconds')
 
 文字列から datetime インスタンスを生成するのは strptime クラスメソッドでできる。
 
-```
+```py
 >>> datetime.strptime('2018-01-02T03:04:05+0900', '%Y-%m-%dT%H:%M:%S%z')
 datetime.strptime('2018-01-02T03:04:05', '%Y-%m-%dT%H:%M:%S')
 datetime.datetime(2018, 1, 2, 3, 4, 5)
@@ -197,7 +197,7 @@ datetime.datetime(2018, 1, 2, 3, 4, 5, tzinfo=datetime.timezone(datetime.timedel
 UTC からのオフセットは情報があるが地域に関する情報はない。
 astimezone メソッドで UTC のデータに変敢して処理し、出力時に適切なタイムゾーンに変関することになる。
 
-```
+```py
 >>> datetime.strptime('2018-01-02T03:04:05+0900', '%Y-%m-%dT%H:%M:%S%z').astimezone(utc)
 datetime.strptime('2018-01-02T03:04:05+0900', '%Y-%m-%dT%H:%M:%S%z').astimezone(utc)
 datetime.datetime(2018, 1, 1, 18, 4, 5, tzinfo=<UTC>)
@@ -208,7 +208,7 @@ datetime.datetime(2018, 1, 1, 18, 4, 5, tzinfo=<UTC>)
 datetime インスタンスを UNIX 時間に変換するのには timestamp メソッドを使う。float で返るので適宜 int に変換等する。
 naive なインスタンスを変関すると、ローカル時間として解釈されて変換される。
 
-```
+```py
 >>> naivetime.timestamp()
 naivetime.timestamp()
 1514829845.0
@@ -222,7 +222,7 @@ awaretime.timestamp()
 UNIX 時間から datetime インスタンスを生成するのには fromtimestamp クラスメソッドを使用する。
 tz キーワードパラメータを指定しないと、ローカル時間の naive インスタンスが生成される。
 
-```
+```py
 >>> datetime.fromtimestamp(1514829845)
 datetime.fromtimestamp(1514829845)
 datetime.datetime(2018, 1, 2, 3, 4, 5)
@@ -230,7 +230,7 @@ datetime.datetime(2018, 1, 2, 3, 4, 5)
 
 tz キーワードパラメータを指定すると、指定したタイムゾーンの aware なインスタンスとなるが、この時 tz に渡すのが pytz の timezone のインスタンスであった場合に、時刻に応じた標準耳間なり夏時間なりに設定される。
 
-```
+```py
 >>> datetime.fromtimestamp(1514829845, tz=ja)
 datetime.fromtimestamp(1514829845, tz=ja)
 datetime.datetime(2018, 1, 2, 3, 4, 5, tzinfo=<DstTzInfo 'Asia/Tokyo' JST+9:00:00 STD>)
@@ -244,7 +244,7 @@ datetime.datetime(2018, 1, 1, 18, 4, 5, tzinfo=<UTC>)
 
 utcfromtimestamp クラスメソッドは UTC で表した時刻の naive なインスタンスを生成する。
 
-```
+```py
 >>> datetime.utcfromtimestamp(1514829845)
 datetime.utcfromtimestamp(1514829845)
 datetime.datetime(2018, 1, 1, 18, 4, 5)
@@ -255,7 +255,7 @@ datetime.datetime(2018, 1, 1, 18, 4, 5)
 現在時刻を取得するのには now クラスメソッドを使用する。
 tz キーワードパラメータを指定しないと、ローカル時間の naive インスタンスが生成される。
 
-```
+```py
 >>> datetime.now()
 datetime.now()
 datetime.datetime(2018, 6, 3, 11, 18, 10, 68268)
@@ -263,7 +263,7 @@ datetime.datetime(2018, 6, 3, 11, 18, 10, 68268)
 
 tz キーワードパラメータを指定すると、指定したタイムゾーンの aware なインスタンスとなるが、この時 tz に渡すのが pytz の timezone のインスタンスであった場合に、時刻に応じた標準耳間なり夏時間なりに設定される。
 
-```
+```py
 >>> datetime.now(tz=ja)
 datetime.now(tz=ja)
 datetime.datetime(2018, 6, 3, 11, 18, 23, 924353, tzinfo=<DstTzInfo 'Asia/Tokyo' JST+9:00:00 STD>)
@@ -271,7 +271,7 @@ datetime.datetime(2018, 6, 3, 11, 18, 23, 924353, tzinfo=<DstTzInfo 'Asia/Tokyo'
 
 utcnow クラスメソッドは UTC で表した現在時刻の naive なインスタンスを生成する。
 
-```
+```py
 >>> datetime.utcnow()
 datetime.utcnow()
 datetime.datetime(2018, 6, 3, 2, 18, 29, 52492)
@@ -291,7 +291,7 @@ datetime.datetime(2018, 6, 3, 2, 18, 29, 52492)
 1. 現在時刻の取得は now クラスメソッド。tz パラメータでタイムゾーン pytz.urc を指定する。
 1. ローカルのタイムゾーン取得は tzlocal.get_localzone 関数。
 
-```
+```py
 from datetime import datetime
 from pytz import timezone, utc
 from tzlocal import get_localzone
