@@ -303,8 +303,8 @@ datetime.datetime(2018, 6, 3, 2, 18, 29, 52492)
 1. 文字列への変換は strftime メソッドもしくは isoformat メソッド。ifoformat メソッドでは timespec を指定する。
 1. 文字列からの変換は strptime クラスメソッドもしくは fromisoformat クラスメソッド。タイムゾーンがない場合は naive なインスタンスになるので localize でローカル時刻の時刻データに変換後、さらに UTC の時刻に変換する。
 1. UNIX 時刻への変換は timestamp メソッド。
-1. UNIX 時刻からの変換は fromtimestamp クラスメソッド。tz パラメータでタイムゾーン pytz.urc を指定する。
-1. 現在時刻の取得は now クラスメソッド。tz パラメータでタイムゾーン pytz.urc を指定する。
+1. UNIX 時刻からの変換は fromtimestamp クラスメソッド。tz パラメータでタイムゾーン pytz.utc を指定する。
+1. 現在時刻の取得は now クラスメソッド。tz パラメータでタイムゾーン pytz.utc を指定する。
 1. ローカルのタイムゾーン取得は tzlocal.get_localzone 関数。
 
 ```py
