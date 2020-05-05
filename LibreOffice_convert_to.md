@@ -1,16 +1,32 @@
 # 使用バージョン
 
-- LibreOffice 6.3.4.2 on FreeBSD
+- LibreOffice 6.3.4_7 on FreeBSD
+
+# 更新内容
+
+- 説明の追加
+- 出力フィルタでの文字エンコーディングの扱いの記述を UTF-8 使用可に変更。
 
 # LibreOffice のスプレッドシートファイル形式変換コマンドライン
 
-## ods / xls / xlsx → ods / xls / xlsx / CSV
+コマンドラインから libreoffice に --convert-to オプションスイッチで変換先のファイル形式を指定して起動することでファイル形式の変換を行える。
+GUI は起動されず、libreoffice は変換のみを行って終了する。
+変換後のファイルはカレントディレクトリに作成され、ファイル名は元のファイル名のサフィックス（拡張子）を変更したものとなる。
+元ファイルを複数指定すればすべて変換される。
+
+ファイルの入出力のフィルタとフィルタのオプションを設定できる。
 
 ```sh
-$ libreoffice --convert-to <ファイル形式> <ファイル名>
+$ libreoffice --convert-to <ファイル形式>[:<出力フィルタ名>[:<出力フィルタオプション>]] [<入力フィルタ名>[:<入力フィルタオプション>]] {<ファイル名>}
 ```
 
-CSV は Shift_JIS で作成される。
+## ods / xls / xlsx → ods / xls / xlsx
+
+ods (Open Document Format Spreadsheet), xls (Microsoft Excel 2003 まで), xlsx (Microsoft Excel 2007 以降）の入力においてはフィルタオプションを指定することはない。
+
+```sh
+$ libreoffice --convert-to <ファイル形式> {<ファイル名>}
+```
 
 例：
 
@@ -18,10 +34,13 @@ CSV は Shift_JIS で作成される。
 $ libreoffice --convert-to xlsx somespreadsheet.ods
 ```
 
-## CSV → ods / xls / xlsx (入力ファイルの形式・文字エンコーディングの指定)
+## csv → ods / xls / xlsx (入力ファイルの形式・文字エンコーディングの指定)
+
+CSV の読み込みに関しては CSV の形式を入力フィルタのフィルタオプションで指定する。
+特に文字エンコーディングを指定しないと Shift_JIS,  UTF-8 いずれの CSV ファイルも文字化けする結果となるため、日本語の文字列を含むファイルの場合は必須となる。
 
 ```sh
-$ libreoffice --convert-to <ファイル形式> --infilter="csv:<パラメータ>" <ファイル名>
+$ libreoffice --convert-to <ファイル形式> --infilter="csv:<フィルタオプション>" <ファイル名>
 ```
 
 例：
@@ -37,7 +56,34 @@ $ libreoffice --convert-to xlsx --infilter="44,34,76" somespreadsheet.csv
 - 76 は文字エンコーディングが UTF-8
 
 であることを表す。
+詳細は後述。
+
 `--convert-to` と変換先ファイル形式の間は空白で `--infilter` とフィルタ指定の間は「=」である必要がある。そのとおりに指定しないとエラーとなる。
+
+## ods / xls / xlsx → csv (出力ファイルの形式・文字エンコーディングの指定)
+
+CSV の書き出しに関しては CSV の形式を出力フィルタのフィルタオプションで指定する。
+文字エンコーディングを指定しないと漢字やかなは代替文字「?」で置き換えられた ASCII ファイルとなるため必須となる。
+以前にテストしたときにはデフォルトの出力が Shift_JIS 固定となり UTF-8 出力できなかったが LibreOffice の更新後に試したところデフォルトが ASCII 出力で指定により Shift_JIS, UTF-8 とも出力可能であった。
+
+```sh
+$ libreoffice --convert-to csv:"Text - txt - csv (StarCalc):<フィルタオプション>" <ファイル名>
+```
+
+例：
+
+```sh
+$ libreoffice --convert-to csv:"Text - txt - csv (StarCalc):44,34,76,,,,,,true" somespreadsheet.xlsx
+```
+
+ここで
+
+- 44 はカラムの間はカンマ区切り
+- 34 はダブルクォートをテキスト区切り（クォーテーション）に使う
+- 76 は文字エンコーディングが UTF-8
+- 9項目めの true は GUI の表示のとおりに出力
+
+であることを表す。詳細は後述。
 
 # 詳細
 
@@ -91,7 +137,3 @@ LibreOffice の挙動を見ると、入力フィルターの指定では Text - 
 - 7番めのトークンは、入力フィルターの場合はクォーテーションされているデータをテキストとして扱う指定、出力フィルターの場合はすべてのカラムをクォーテーションして出力する指定の真偽値。デフォルトは false。
 - 8番めのトークンは、入力フィルターの場合は日付や指数表現を検出する指定の真偽値。出力フィルターの場合は数値を数値として出力する指定。デフォルトは false。
 - 9番めのトークンは、出力フィルターの場合のみ有効でセルの内容を表示どおりに出力する指定の真偽値。デフォルトは false。
-
-
-
-
