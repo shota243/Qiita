@@ -3,6 +3,10 @@
 - LibreOffice 6.3.6 on FreeBSD, Windows
 - Python 3.7.7
 
+# 2020/7/1 改訂内容
+
+- コマンドラインからマクロを起動する場合の引数の与え方を記述
+
 # 概要
 
 LibreOffice を Python で操作するには、
@@ -178,14 +182,17 @@ Python のグローバル変数としては pythonscript.ScriptContext クラス
 LibreOffice 起動時にマクロを指定するコマンドラインは以下のとおり
 
 ```
-soffice 'vnd.sun.star.script:<スクリプトファイル名>$<関数名>?language=Python&location=user'
+soffice 'vnd.sun.star.script:<スクリプトファイル名>$<関数名>[(<引数>{,<引数>})]?language=Python&location=user'
 ```
+
+引数がある場合は括弧にカンマ区切りで並べる。引数は文字列で前後の空白を削除した上で関数に引き渡される。
+引数がない場合は括弧自体不要。
 
 これによりマクロを実行して LibreOffice を終了する。
 マクロが画面を表示する必要がなければ --headless スイッチをつければ画面は表示されない。
 マクロ実行中にエラーが発生するとエラーダイアログを表示してユーザーの確認を要求するが --headless が指定してあるとダイアログも表示せずにハングアップする。
 
-例：
+例1：
 
 ```py:mymacro.py
 def macrofunc():
@@ -196,6 +203,26 @@ def macrofunc():
 
 ```
 $ soffice --headless 'vnd.sun.star.script:mymacro.py$macrofunc?language=Python&location=user'
+```
+
+例2：
+
+```py:args.py
+from msgbox import MsgBox
+
+def show_args(*args):
+    ctx = XSCRIPTCONTEXT.getComponentContext()
+    args_box = MsgBox(ctx)
+    args_box.addButton('ok')
+    args_box.renderFromBoxSize(300)
+    args = '\n'.join(args)
+    args_box.show(args, 0, 'args')
+```
+
+を引数「1」と「b」つきで起動するには
+
+```
+$ soffice 'vnd.sun.star.script:args.py$show_args(1 , b)?language=Python&location=user'
 ```
 
 # コマンドラインから起動した Python からの接続
