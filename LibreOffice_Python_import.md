@@ -1,3 +1,7 @@
+# 2020/7/3 更新内容
+
+- マクロから import するモジュールの存続期間と XSCRIPTCONTEXT の設定について記述
+
 # 使用バージョン
 
 - LibreOffice 6.4.4
@@ -99,6 +103,34 @@ Type "help", "copyright", "credits" or "license" for more information.
 APSO 拡張機能のインストール先が　/home/shota243/.config/libreoffice/4/user/uno_packages/cache/uno_packages/lu2030qffpne.tmp_。
 (前略)lu2030qffpne.tmp_/apso.oxt/python/apso.py が本体で (前略)lu2030qffpne.tmp_/apso.oxt/python/pythonpath ディレクトリ下の
 apso_debug.py, apso_utils.py, theconsole.py がモジュール。
+
+## マクロから import したモジュールの存続期間
+
+マクロを終了した後でマクロからしたモジュールを変更して再度マクロを起動しても変更後のモジュールは再読み込みされず変更前の状態のままとなる。これはマクロを終了しても Python インタープリタは終了しないことによると考えられる。
+モジュールを読み込み直すためには LibreOffice 自体を再起動する。
+
+## マクロから import したモジュールの XSCRIPTCONTEXT
+
+マクロの XSCRIPTCONTEXT 変数は [imp.new_module()](https://docs.python.org/ja/3.7/library/imp.html#imp.new_module) 関数で作成したモジュールの変数として作成され、マクロから import したモジュールからは参照できない。直接参照できないだけではなく関数の引数で渡しても、あるいは XSCRIPTCONTEXT のメソッドを呼び出して取得した Desktop 等を引数で渡しても参照時にエラーとなる。
+
+回避策として、モジュールの側で uno.getComponentContext() でコンテクストを取得して XSCRIPTCONTEXT 変数相当のものを作成する。
+
+```py:pythonpath/xscriptcontext.py
+import uno
+from pythonscript import ScriptContext
+
+def get_xscriptcontext():
+    UNO_DESKTOP = "com.sun.star.frame.Desktop"
+    ctx = uno.getComponentContext()
+    smgr = ctx.getServiceManager()
+    XSCRIPTCONTEXT = ScriptContext(ctx,
+                                   smgr.createInstanceWithContext(UNO_DESKTOP, ctx),
+                                   None)
+    return XSCRIPTCONTEXT
+```
+
+この XSCRIPTCONTEXT は、[LibreOffice を Python で操作する](https://qiita.com/shota243/items/286ae4083556ae98b611) に書いた起動済みの LibreOffice に接続する Python プログラム用の XSCRIPTCONTEXT 同様 inv (Invocation Context) パラメータを None として作成しているため getInvocationContext() メソッドが None を返す。
+Invocation Context のサポートは将来の課題とする。
 
 # UNO 固有モジュールからの import
 
