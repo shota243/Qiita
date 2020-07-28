@@ -1,11 +1,12 @@
 # 使用バージョン
 
-- LibreOffice 6.3.4_7 on FreeBSD
+- LibreOffice 6.4.5 on FreeBSD
 
-# 更新内容
+# 2020/7/24更新内容
 
-- 説明の追加
-- 出力フィルタでの文字エンコーディングの扱いの記述を UTF-8 使用可に変更。
+- 使用バージョンの更新
+- 入出力フィルタ一覧の参照先に別記事を追加。
+- CSVフィルタの5番めのトークンが効かなかった記述を削除。
 
 # LibreOffice のスプレッドシートファイル形式変換コマンドライン
 
@@ -102,7 +103,9 @@ LibreOffice の Wikiページ [LibreOffice ソフトウェアをパラメータ�
 
 入力フィルターは --infilter で、出力フィルターは --convert-to で指定するようになっている。
 
-フィルターとオプションの一覧については Apache OpenOffice の Wiki ページ [Filter Options](https://wiki.openoffice.org/wiki/Documentation/DevGuide/Spreadsheets/Filter_Options) が参考となる。
+フィルターの一覧については [LibreOffice を Python で操作: 入出力フィルタ](LibreOffice を Python で操作: 入出力フィルタ) を参照。
+
+オプションの一覧については Apache OpenOffice の Wiki ページ [Filter Options](https://wiki.openoffice.org/wiki/Documentation/DevGuide/Spreadsheets/Filter_Options) が参考となる。
 LibreOffice の記述ではないため差異がある場合は挙動から判断することになる。
 
 この表中では Text - txt - csv (StarCalc) フィルターが入力・出力ともに仕様できることとなっている。
@@ -131,7 +134,7 @@ LibreOffice の挙動を見ると、入力フィルターの指定では Text - 
   - Unicode UCS2 : 65535
 
 - 4番めのトークンは、開始行、デフォルトで1。
-- 5番めのトークンは、先頭4カラムめまでの読み込み形式の指定。詳細は上記ページを参照。ただし試してみるとGUIからのインポートだと日付に解釈されるデータもこのトークンの指定にかかわらず文字列となった。
+- 5番めのトークンは、先頭4カラムめまでの読み込み形式の指定。詳細は上記ページを参照。
 - 6番めのトークンは言語識別番号。省略するとUIの言語識別番号が使用される。この番号については Microsoft のページ [Language Identifier Constants and Strings](https://docs.microsoft.com/ja-jp/windows/win32/intl/language-identifier-constants-and-strings?redirectedfrom=MSDN) を参照するように指定されているがリンク先では言語識別番号は廃止されているとされている。
 おそらく日本語の指定は 1041 であるが通常は指定不要と考えられる。
 - 7番めのトークンは、入力フィルターの場合はクォーテーションされているデータをテキストとして扱う指定、出力フィルターの場合はすべてのカラムをクォーテーションして出力する指定の真偽値。デフォルトは false。
