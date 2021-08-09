@@ -193,7 +193,7 @@ if __name__ == '__main__':
 PNG への変換も PDF 経由とするため pdfcrop までは SVG と同様である。
 ただし、紙サイズの切り詰めは dvipng に対して -T tight での指定となるため、その場合にのみ pdfcrop を呼ぶようにした。TexMaths からは必ず指定されるのだが。
 TexMaths がパラメータを変えてくることがあるのが透過の指定の -bg Transparent と解像度の指定の -D \<dpi\> なので、
-それに応じて pdfcairo を呼ぶときにそれぞれ -transp スイッチをつけるかどうかと -r \<dpi\> で解像度を指定するかを設定するようにした。
+それに応じて pdftocairo を呼ぶときにそれぞれ -transp スイッチをつけるかどうかと -r \<dpi\> で解像度を指定するかを設定するようにした。
 
 ```py:jdvipdfmxpng
 #!/usr/bin/env python
@@ -266,6 +266,6 @@ TeX で使うので Lua の方が依存を増やさずに済むが、自分は L
 ### 地域化メッセージ
 
 TexMaths は翻訳メッセージファイルを
-${HOME}/.config/libreoffice/4/user/uno_packages/cache/uno_packages/lu1313svtdi6.tmp_/texmaths-0-48.oxt/po
+${HOME}/.config/libreoffice/4/user/uno_packages/cache/uno_packages/lu1436mv810x.tmp_/TexMaths-0-v2.49.oxt/po
 ディレクトリ下に持っている。
 ここに ja.po ファイルを作成して日本語翻訳を入れれば表示させることができるが翻訳は現在提供されていない。
